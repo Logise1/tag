@@ -229,7 +229,10 @@ const Game = {
         const uid = Auth.currentUser.uid;
         entries.innerHTML = '';
 
-        sorted.forEach((p, i) => {
+        const MAX_SHOW = 5;
+        let myRank = sorted.findIndex(p => p.id === uid);
+
+        const renderEntry = (p, i) => {
             const div = document.createElement('div');
             div.className = 'hud-lb-entry' + (p.id === uid ? ' is-me' : '');
             const rankClass = i < 3 ? ` rank-${i+1}` : '';
@@ -252,8 +255,31 @@ const Game = {
                 </div>
                 <span class="hud-lb-pts">${p.points}</span>
             `;
-            entries.appendChild(div);
-        });
+            return div;
+        };
+
+        // Show top N
+        const showCount = Math.min(MAX_SHOW, sorted.length);
+        for (let i = 0; i < showCount; i++) {
+            entries.appendChild(renderEntry(sorted[i], i));
+        }
+
+        // If I'm outside top N, show separator + my entry
+        if (myRank >= MAX_SHOW) {
+            const sep = document.createElement('div');
+            sep.className = 'hud-lb-entry';
+            sep.innerHTML = '<span style="color:var(--text-muted);font-size:0.7rem;width:100%;text-align:center">···</span>';
+            entries.appendChild(sep);
+            entries.appendChild(renderEntry(sorted[myRank], myRank));
+        }
+
+        // Player count
+        if (sorted.length > MAX_SHOW) {
+            const count = document.createElement('div');
+            count.style.cssText = 'font-size:0.65rem;color:var(--text-muted);text-align:right;padding:2px 4px 0';
+            count.textContent = `${sorted.length} jugadores`;
+            entries.appendChild(count);
+        }
     },
 
     // ── Match Timer ────────────────────────────────

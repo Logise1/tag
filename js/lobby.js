@@ -60,7 +60,7 @@ const Lobby = {
         const nameInput = document.getElementById('room-name');
         const maxPlayersInput = document.getElementById('room-max-players');
         const name = nameInput.value.trim() || `Sala de ${Auth.username}`;
-        const maxPlayers = Math.min(8, Math.max(2, parseInt(maxPlayersInput.value) || 4));
+        const maxPlayers = Math.min(50, Math.max(2, parseInt(maxPlayersInput.value) || 4));
         const matchDuration = Math.min(600, Math.max(60, parseInt(document.getElementById('room-match-duration').value) || 180));
 
         const uid = Auth.currentUser.uid;
@@ -245,16 +245,23 @@ const Lobby = {
 
         // Set roles and spawn positions
         const ts = GameMap.TILE_SIZE;
-        const centerX = Math.floor(GameMap.WIDTH / 2) * ts;
+        const mapW = GameMap.WIDTH;
+        const centerX = Math.floor(mapW / 2) * ts;
         const groundY = (GameMap.HEIGHT - 4) * ts;
 
-        // Tagger spawn points (edges of the map)
-        const taggerSpawns = [
-            { x: 4 * ts, y: groundY },
-            { x: (GameMap.WIDTH - 5) * ts, y: groundY },
-            { x: 15 * ts, y: groundY },
-            { x: (GameMap.WIDTH - 16) * ts, y: groundY }
-        ];
+        // Generate tagger spawn points spread across map edges
+        const taggerSpawns = [];
+        for (let i = 0; i < Math.max(taggerCount, 10); i++) {
+            // Alternate left and right edges, varying X position
+            const side = i % 2 === 0 ? 'left' : 'right';
+            const xBase = side === 'left' ? (3 + (i % 5) * 2) : (mapW - 4 - (i % 5) * 2);
+            taggerSpawns.push({ x: xBase * ts, y: groundY });
+        }
+
+        // Survivor spawn: spread evenly around center, multiple rows if needed
+        const survivorCount = playerIds.length - taggerCount;
+        const maxPerRow = Math.min(survivorCount, 15); // Max 15 per row
+        const survivorSpacing = Math.min(50, (mapW * ts * 0.5) / Math.max(maxPerRow, 1));
 
         const updates = {};
         let taggerIdx = 0;
@@ -265,21 +272,23 @@ const Lobby = {
             let spawnX, spawnY;
 
             if (isTagger) {
-                // Taggers spawn at edges
                 const spawn = taggerSpawns[taggerIdx % taggerSpawns.length];
                 spawnX = spawn.x;
                 spawnY = spawn.y;
                 taggerIdx++;
             } else {
-                // Survivors spawn spread around center
-                spawnX = centerX + (survivorIdx - (playerIds.length - taggerCount) / 2) * 50;
-                spawnY = groundY;
+                // Spread survivors in rows
+                const row = Math.floor(survivorIdx / maxPerRow);
+                const col = survivorIdx % maxPerRow;
+                const rowCount = Math.min(maxPerRow, survivorCount - row * maxPerRow);
+                spawnX = centerX + (col - rowCount / 2) * survivorSpacing;
+                spawnY = groundY - row * (ts * 3); // Each row 3 blocks higher
                 survivorIdx++;
             }
 
             updates[`players/${pid}/role`] = isTagger ? 'tagger' : 'survivor';
             updates[`players/${pid}/x`] = Math.round(spawnX);
-            updates[`players/${pid}/y`] = spawnY;
+            updates[`players/${pid}/y`] = Math.round(spawnY);
             updates[`players/${pid}/immuneUntil`] = 0;
         });
 
@@ -363,7 +372,12 @@ const Lobby = {
     },
 
     _randomColor() {
-        const colors = ['#7c3aed', '#3b82f6', '#10b981', '#f59e0b', '#ec4899', '#06b6d4', '#8b5cf6', '#14b8a6'];
+        const colors = [
+            '#7c3aed', '#3b82f6', '#10b981', '#f59e0b', '#ec4899', '#06b6d4',
+            '#8b5cf6', '#14b8a6', '#f97316', '#6366f1', '#84cc16', '#e11d48',
+            '#0ea5e9', '#a855f7', '#22c55e', '#eab308', '#d946ef', '#0d9488',
+            '#f43f5e', '#2563eb', '#16a34a', '#ca8a04', '#9333ea', '#0891b2'
+        ];
         return colors[Math.floor(Math.random() * colors.length)];
     },
 
