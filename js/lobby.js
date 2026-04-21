@@ -84,6 +84,7 @@ const Lobby = {
                     username: Auth.username,
                     color: this._randomColor(),
                     banner: Shop.selectedBanner || null,
+                    font: Shop.selectedFont || 'outfit',
                     ready: false,
                     x: 0, y: 0,
                     role: 'survivor'
@@ -128,6 +129,7 @@ const Lobby = {
                 username: Auth.username,
                 color: this._randomColor(),
                 banner: Shop.selectedBanner || null,
+                font: Shop.selectedFont || 'outfit',
                 ready: false,
                 x: 0, y: 0,
                 role: 'survivor'
@@ -203,9 +205,18 @@ const Lobby = {
             const div = document.createElement('div');
             div.className = 'waiting-player';
             const color = player.color || colors[i % colors.length];
+            const bannerUrl = player.banner ? Shop.getBannerUrl(player.banner) : null;
+            const fontFamily = Shop.getFontFamily(player.font || 'outfit');
+
+            let bannerHtml = '';
+            if (bannerUrl) {
+                bannerHtml = `<div class="waiting-player-banner"><img src="${bannerUrl}" alt=""></div>`;
+            }
+
             div.innerHTML = `
+                ${bannerHtml}
                 <div class="waiting-player-avatar" style="background:${color}">${player.username[0].toUpperCase()}</div>
-                <span class="waiting-player-name">${this._escapeHtml(player.username)}</span>
+                <span class="waiting-player-name" style="font-family:${fontFamily}">${this._escapeHtml(player.username)}</span>
                 ${uid === hostId ? '<span class="waiting-player-host">Host</span>' : ''}
             `;
             container.appendChild(div);

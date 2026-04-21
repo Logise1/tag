@@ -61,6 +61,7 @@ const Game = {
         this.localPlayer.role = myData.role || 'survivor';
         this.localPlayer.points = 0;
         this.localPlayer.banner = Shop.selectedBanner || null;
+        this.localPlayer.font = Shop.selectedFont || 'outfit';
 
         // All players
         this.players = {};
@@ -230,15 +231,25 @@ const Game = {
 
         sorted.forEach((p, i) => {
             const div = document.createElement('div');
-            div.className = 'hud-lb-entry';
+            div.className = 'hud-lb-entry' + (p.id === uid ? ' is-me' : '');
             const rankClass = i < 3 ? ` rank-${i+1}` : '';
-            const isMe = p.id === uid;
-            const dotColor = p.role === 'tagger' ? '#ef4444' : (p.color || '#3b82f6');
+            const bannerUrl = p.banner ? Shop.getBannerUrl(p.banner) : null;
+            const fontFamily = Shop.getFontFamily(p.font || 'outfit');
+
+            let bgHtml = '';
+            if (bannerUrl) {
+                bgHtml = `<div class="hud-lb-namecard-bg" style="background-image:url('${bannerUrl}')"></div>`;
+            } else {
+                const c = p.color || '#3b82f6';
+                bgHtml = `<div class="hud-lb-namecard-nobg" style="background:${c}22;border:1px solid ${c}44;border-radius:4px"></div>`;
+            }
 
             div.innerHTML = `
                 <span class="hud-lb-rank${rankClass}">${i+1}</span>
-                <span class="hud-lb-dot" style="background:${dotColor}"></span>
-                <span class="hud-lb-name${isMe ? ' is-me' : ''}">${p.username}</span>
+                <div class="hud-lb-namecard">
+                    ${bgHtml}
+                    <span class="hud-lb-name" style="font-family:${fontFamily}">${p.username}</span>
+                </div>
                 <span class="hud-lb-pts">${p.points}</span>
             `;
             entries.appendChild(div);
@@ -294,12 +305,22 @@ const Game = {
             const pCoins = Math.floor(p.points / 8);
             const isMe = p.id === uid;
             const posClass = i < 3 ? ` pos-${i+1}` : '';
+            const bannerUrl = p.banner ? Shop.getBannerUrl(p.banner) : null;
+            const fontFamily = Shop.getFontFamily(p.font || 'outfit');
+
+            let bgHtml = '';
+            if (bannerUrl) {
+                bgHtml = `<div class="end-rank-namecard-bg" style="background-image:url('${bannerUrl}')"></div>`;
+            }
 
             const div = document.createElement('div');
             div.className = 'end-rank-entry' + (isMe ? ' is-me' : '');
             div.innerHTML = `
                 <span class="end-rank-pos${posClass}">#${i+1}</span>
-                <span class="end-rank-name">${p.username}</span>
+                <div class="end-rank-namecard">
+                    ${bgHtml}
+                    <span class="end-rank-name" style="font-family:${fontFamily}">${p.username}</span>
+                </div>
                 <span class="end-rank-pts">⭐ ${p.points}</span>
                 <span class="end-rank-coins">🪙 +${pCoins}</span>
             `;
@@ -419,11 +440,15 @@ const Game = {
             p.facing = stateData.facing || p.facing;
             p.immuneUntil = stateData.immuneUntil || 0;
             if (stateData.points !== undefined) p.points = stateData.points;
+            if (stateData.banner !== undefined) p.banner = stateData.banner;
+            if (stateData.font !== undefined) p.font = stateData.font;
         } else {
             const p = new Player(peerUid, stateData.username || 'Player',
                 stateData.x || 0, stateData.y || 0, stateData.color);
             p.role = stateData.role || 'survivor';
             p.points = stateData.points || 0;
+            p.banner = stateData.banner || null;
+            p.font = stateData.font || 'outfit';
             this.players[peerUid] = p;
         }
     },

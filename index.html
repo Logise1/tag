@@ -7,7 +7,7 @@
     <title>TAG! - Multiplayer Tag Game</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Bangers&family=Black+Ops+One&family=Bungee&family=Caveat:wght@700&family=Comfortaa:wght@700&family=Creepster&family=Fredoka+One&family=Lacquer&family=Luckiest+Guy&family=Metal+Mania&family=Monoton&family=Nosifer&family=Orbitron:wght@700&family=Outfit:wght@300;400;500;600;700;800;900&family=Pacifico&family=Permanent+Marker&family=Press+Start+2P&family=Quicksand:wght@700&family=Righteous&family=Rubik+Glitch&family=Russo+One&family=Satisfy&family=Silkscreen&family=VT323&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/auth.css">
     <link rel="stylesheet" href="css/lobby.css">
@@ -66,22 +66,22 @@
                 <button id="btn-create-room" class="lobby-card" onclick="Lobby.showCreateRoom()">
                     <div class="lobby-card-icon">🏠</div>
                     <h2>Crear Sala</h2>
-                    <p>Crea una nueva partida y invita amigos</p>
+                    <p>Crea una nueva partida</p>
                 </button>
                 <button id="btn-join-room" class="lobby-card" onclick="Lobby.showJoinRoom()">
                     <div class="lobby-card-icon">🚪</div>
-                    <h2>Unirse a Sala</h2>
+                    <h2>Unirse</h2>
                     <p>Entra a una partida existente</p>
                 </button>
                 <button id="btn-stats" class="lobby-card" onclick="Stats.show()">
                     <div class="lobby-card-icon">📊</div>
                     <h2>Estadísticas</h2>
-                    <p>Mira tu rendimiento y récords</p>
+                    <p>Tu rendimiento y récords</p>
                 </button>
-                <button id="btn-shop" class="lobby-card shop-card" onclick="Shop.show()">
+                <button id="btn-shop" class="lobby-card" onclick="Shop.show()">
                     <div class="lobby-card-icon">🛒</div>
                     <h2>Tienda</h2>
-                    <p>Compra banners y personaliza tu perfil</p>
+                    <p>Banners y fuentes</p>
                 </button>
             </div>
         </div>
@@ -123,7 +123,7 @@
             <div class="modal-content modal-wide">
                 <button class="modal-close" onclick="UI.closeModals()">✕</button>
                 <h2>Estadísticas</h2>
-                <div id="stats-content" class="stats-grid">
+                <div class="stats-grid">
                     <div class="stat-card">
                         <div class="stat-value" id="stat-games">0</div>
                         <div class="stat-label">Partidas</div>
@@ -143,16 +143,26 @@
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- Shop Modal -->
-        <div id="modal-shop" class="modal">
-            <div class="modal-content modal-wide">
-                <button class="modal-close" onclick="UI.closeModals()">✕</button>
-                <h2>🛒 Tienda de Banners</h2>
-                <div class="shop-coins-display">
-                    <span class="coin-icon">🪙</span> <span id="shop-coins">0</span> monedas
+    <!-- Shop Screen (Full Screen) -->
+    <div id="shop-screen" class="screen">
+        <div class="shop-container">
+            <div class="shop-header">
+                <div class="shop-header-left">
+                    <button class="btn btn-ghost btn-small" onclick="Shop.close()">← Volver</button>
+                    <h1 class="shop-title">🛒 Tienda</h1>
                 </div>
-                <div id="banner-grid" class="banner-grid"></div>
+                <div class="shop-coins-badge">
+                    🪙 <span id="shop-coins-val">0</span>
+                </div>
+            </div>
+            <div class="shop-tabs-bar">
+                <button id="shop-tab-banners" class="shop-tab active" onclick="Shop.switchTab('banners')">🖼️ Banners</button>
+                <button id="shop-tab-fonts" class="shop-tab" onclick="Shop.switchTab('fonts')">🔤 Fuentes</button>
+            </div>
+            <div class="shop-body">
+                <div id="shop-grid" class="shop-items-grid banners-grid"></div>
             </div>
         </div>
     </div>

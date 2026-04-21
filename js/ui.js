@@ -10,6 +10,7 @@ const UI = {
             loading: document.getElementById('loading-screen'),
             auth: document.getElementById('auth-screen'),
             lobby: document.getElementById('lobby-screen'),
+            shop: document.getElementById('shop-screen'),
             waiting: document.getElementById('waiting-screen'),
             game: document.getElementById('game-screen')
         };

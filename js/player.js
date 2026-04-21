@@ -18,8 +18,11 @@ class Player {
         this.onGround = false;
         this.facing = 1;
         this.immuneUntil = 0;
-        this.frozen = false; // For grace period taggers
+        this.frozen = false;
         this.lastSync = 0;
+        this.points = 0;
+        this.banner = null;
+        this.font = 'outfit';
 
         // Physics
         this.speed = 190;
@@ -388,8 +391,9 @@ class Player {
         ctx.globalAlpha = 1;
 
         // Username above (outside squash transform)
+        const fontFamily = (typeof Shop !== 'undefined') ? Shop.getFontFamily(this.font) : 'Outfit';
         ctx.fillStyle = isTagger ? '#fca5a5' : '#e2e8f0';
-        ctx.font = '600 10px Outfit';
+        ctx.font = `600 10px ${fontFamily}`;
         ctx.textAlign = 'center';
         ctx.fillText(this.username, this.x, this.y - 8);
     }
@@ -419,7 +423,8 @@ class Player {
             color: this.color,
             immuneUntil: this.immuneUntil,
             points: this.points || 0,
-            banner: this.banner || null
+            banner: this.banner || null,
+            font: this.font || 'outfit'
         };
     }
 }
