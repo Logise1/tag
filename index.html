@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="TAG! - Multiplayer Tag Game">
+    <title>TAG! - Multiplayer Tag Game</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/auth.css">
+    <link rel="stylesheet" href="css/lobby.css">
+    <link rel="stylesheet" href="css/game.css">
+    <link rel="stylesheet" href="css/shop.css">
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="screen active">
+        <div class="loading-content">
+            <h1 class="loading-title">TAG<span class="accent">!</span></h1>
+            <div class="loading-spinner"></div>
+            <p class="loading-text">Conectando...</p>
+        </div>
+    </div>
+
+    <!-- Auth Screen -->
+    <div id="auth-screen" class="screen">
+        <div class="auth-container">
+            <div class="auth-header">
+                <h1 class="auth-title">TAG<span class="accent">!</span></h1>
+                <p class="auth-subtitle">Juego de Pilla-Pilla Multijugador</p>
+            </div>
+            <div class="auth-tabs">
+                <button id="tab-login" class="auth-tab active" onclick="UI.switchAuthTab('login')">Entrar</button>
+                <button id="tab-register" class="auth-tab" onclick="UI.switchAuthTab('register')">Registro</button>
+            </div>
+            <form id="auth-form" class="auth-form" onsubmit="return false;">
+                <div class="input-group">
+                    <label for="auth-username">Usuario</label>
+                    <input type="text" id="auth-username" placeholder="Tu nombre de usuario" required autocomplete="username">
+                </div>
+                <div class="input-group">
+                    <label for="auth-password">Contraseña</label>
+                    <input type="password" id="auth-password" placeholder="Tu contraseña" required autocomplete="current-password">
+                </div>
+                <div id="auth-error" class="auth-error"></div>
+                <button type="submit" id="auth-submit" class="btn btn-primary btn-full">Entrar</button>
+            </form>
+        </div>
+        <div class="auth-particles" id="auth-particles"></div>
+    </div>
+
+    <!-- Lobby Screen -->
+    <div id="lobby-screen" class="screen">
+        <div class="lobby-header">
+            <h1 class="lobby-title">TAG<span class="accent">!</span></h1>
+            <div class="lobby-user-info">
+                <span class="lobby-coins" id="lobby-coins">🪙 0</span>
+                <span id="lobby-username" class="lobby-username"></span>
+                <button id="btn-logout" class="btn btn-ghost btn-small" onclick="Auth.logout()">Salir</button>
+            </div>
+        </div>
+        <div class="lobby-content">
+            <div class="lobby-actions">
+                <button id="btn-create-room" class="lobby-card" onclick="Lobby.showCreateRoom()">
+                    <div class="lobby-card-icon">🏠</div>
+                    <h2>Crear Sala</h2>
+                    <p>Crea una nueva partida y invita amigos</p>
+                </button>
+                <button id="btn-join-room" class="lobby-card" onclick="Lobby.showJoinRoom()">
+                    <div class="lobby-card-icon">🚪</div>
+                    <h2>Unirse a Sala</h2>
+                    <p>Entra a una partida existente</p>
+                </button>
+                <button id="btn-stats" class="lobby-card" onclick="Stats.show()">
+                    <div class="lobby-card-icon">📊</div>
+                    <h2>Estadísticas</h2>
+                    <p>Mira tu rendimiento y récords</p>
+                </button>
+                <button id="btn-shop" class="lobby-card shop-card" onclick="Shop.show()">
+                    <div class="lobby-card-icon">🛒</div>
+                    <h2>Tienda</h2>
+                    <p>Compra banners y personaliza tu perfil</p>
+                </button>
+            </div>
+        </div>
+
+        <!-- Create Room Modal -->
+        <div id="modal-create" class="modal">
+            <div class="modal-content">
+                <button class="modal-close" onclick="UI.closeModals()">✕</button>
+                <h2>Crear Sala</h2>
+                <div class="input-group">
+                    <label for="room-name">Nombre de la sala</label>
+                    <input type="text" id="room-name" placeholder="Mi sala genial" maxlength="20">
+                </div>
+                <div class="input-group">
+                    <label for="room-max-players">Máx. jugadores (2-8)</label>
+                    <input type="number" id="room-max-players" value="4" min="2" max="8">
+                </div>
+                <div class="input-group">
+                    <label for="room-match-duration">Duración partida (segundos)</label>
+                    <input type="number" id="room-match-duration" value="180" min="60" max="600" step="30">
+                </div>
+                <button id="btn-confirm-create" class="btn btn-primary btn-full" onclick="Lobby.createRoom()">Crear</button>
+            </div>
+        </div>
+
+        <!-- Join Room Modal -->
+        <div id="modal-join" class="modal">
+            <div class="modal-content">
+                <button class="modal-close" onclick="UI.closeModals()">✕</button>
+                <h2>Unirse a Sala</h2>
+                <div id="room-list" class="room-list">
+                    <p class="room-list-empty">Buscando salas...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Modal -->
+        <div id="modal-stats" class="modal">
+            <div class="modal-content modal-wide">
+                <button class="modal-close" onclick="UI.closeModals()">✕</button>
+                <h2>Estadísticas</h2>
+                <div id="stats-content" class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="stat-games">0</div>
+                        <div class="stat-label">Partidas</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="stat-tags">0</div>
+                        <div class="stat-label">Tags Hechos</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="stat-tagged">0</div>
+                        <div class="stat-label">Veces Pillado</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="stat-coins">0</div>
+                        <div class="stat-label">🪙 Monedas</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Shop Modal -->
+        <div id="modal-shop" class="modal">
+            <div class="modal-content modal-wide">
+                <button class="modal-close" onclick="UI.closeModals()">✕</button>
+                <h2>🛒 Tienda de Banners</h2>
+                <div class="shop-coins-display">
+                    <span class="coin-icon">🪙</span> <span id="shop-coins">0</span> monedas
+                </div>
+                <div id="banner-grid" class="banner-grid"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Waiting Room Screen -->
+    <div id="waiting-screen" class="screen">
+        <div class="waiting-container">
+            <div class="waiting-header">
+                <h2>Sala: <span id="waiting-room-name"></span></h2>
+                <p class="room-code">Código: <span id="waiting-room-code"></span></p>
+            </div>
+            <div class="waiting-players" id="waiting-players"></div>
+            <div id="host-controls" class="host-controls" style="display:none;">
+                <div class="input-group">
+                    <label for="tagger-count">Jugadores que ligan</label>
+                    <input type="number" id="tagger-count" value="1" min="1" max="3">
+                </div>
+                <div class="input-group">
+                    <label for="match-duration">Duración (segundos)</label>
+                    <input type="number" id="match-duration" value="180" min="60" max="600" step="30">
+                </div>
+                <button id="btn-start-game" class="btn btn-primary btn-full" onclick="Lobby.startGame()">
+                    Iniciar Partida
+                </button>
+            </div>
+            <button id="btn-leave-room" class="btn btn-danger btn-full" onclick="Lobby.leaveRoom()">Abandonar Sala</button>
+        </div>
+    </div>
+
+    <!-- Game Screen -->
+    <div id="game-screen" class="screen">
+        <canvas id="game-canvas"></canvas>
+        <div id="game-hud" class="game-hud">
+            <div class="hud-top">
+                <div class="hud-top-left">
+                    <div id="game-timer" class="hud-timer">⏱ 3:00</div>
+                    <div id="game-points" class="hud-points">
+                        ⭐ <span class="pts-value" id="pts-value">0</span>
+                    </div>
+                </div>
+                <div id="game-message" class="hud-message"></div>
+                <div id="game-role" class="hud-role"></div>
+            </div>
+            <div class="hud-bottom">
+                <div id="player-list-hud" class="hud-players"></div>
+            </div>
+        </div>
+        <!-- Leaderboard -->
+        <div id="hud-leaderboard" class="hud-leaderboard">
+            <div class="hud-leaderboard-title">🏆 Clasificación</div>
+            <div id="leaderboard-entries"></div>
+        </div>
+        <div id="game-countdown" class="game-countdown"></div>
+        <!-- Tagger blind overlay -->
+        <div id="tagger-blind" class="tagger-blind-overlay">
+            <div class="blind-content">
+                <div class="blind-icon">🙈</div>
+                <h2>¡Estás ciego!</h2>
+                <p>Los supervivientes están escapando...</p>
+                <div class="blind-timer" id="blind-timer">20</div>
+            </div>
+        </div>
+        <!-- End Game Overlay -->
+        <div id="end-game-overlay" class="end-game-overlay">
+            <div class="end-game-content">
+                <h2 class="end-game-title">🏁 ¡Fin de la partida!</h2>
+                <p class="end-game-subtitle">Resultados finales</p>
+                <div class="end-game-coins" id="end-game-coins">
+                    🪙 +<span id="end-coins-earned">0</span> monedas ganadas
+                </div>
+                <div class="end-game-list" id="end-game-list"></div>
+                <button class="btn btn-primary btn-full" onclick="Game.backToLobby()">Volver al Lobby</button>
+            </div>
+        </div>
+        <button id="btn-leave-game" class="btn btn-ghost btn-small game-leave-btn" onclick="Game.leave()">✕ Salir</button>
+    </div>
+
+    <!-- PeerJS -->
+    <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+    <!-- Game Scripts -->
+    <script src="js/firebase-config.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/stats.js"></script>
+    <script src="js/shop.js"></script>
+    <script src="js/input.js"></script>
+    <script src="js/camera.js"></script>
+    <script src="js/map.js"></script>
+    <script src="js/player.js"></script>
+    <script src="js/network.js"></script>
+    <script src="js/lobby.js"></script>
+    <script src="js/game.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

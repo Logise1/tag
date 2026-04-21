@@ -1,0 +1,291 @@
+/* ==========================================
+   Lobby & Waiting Room Styles
+   ========================================== */
+
+#lobby-screen {
+    background: var(--bg-dark);
+    justify-content: flex-start;
+    padding: 0;
+}
+
+.lobby-header {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 32px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(18, 18, 42, 0.8);
+    backdrop-filter: blur(12px);
+}
+
+.lobby-title {
+    font-size: 2rem;
+    font-weight: 900;
+    letter-spacing: -1px;
+}
+
+.lobby-user-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.lobby-username {
+    font-weight: 600;
+    color: var(--primary-light);
+    font-size: 0.95rem;
+}
+
+.lobby-coins {
+    font-weight: 700;
+    color: #fbbf24;
+    font-size: 0.9rem;
+    background: rgba(251, 191, 36, 0.1);
+    padding: 4px 12px;
+    border-radius: var(--radius-sm);
+    border: 1px solid rgba(251, 191, 36, 0.2);
+}
+
+.lobby-content {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+}
+
+.lobby-actions {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    max-width: 600px;
+    width: 100%;
+}
+
+@media (max-width: 500px) {
+    .lobby-actions {
+        grid-template-columns: 1fr;
+        max-width: 340px;
+    }
+}
+
+/* Lobby Cards */
+.lobby-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 32px 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    font-family: 'Outfit', sans-serif;
+    color: var(--text-primary);
+    position: relative;
+    overflow: hidden;
+}
+
+.lobby-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    opacity: 0;
+    transition: opacity var(--transition-normal);
+}
+
+.lobby-card:hover {
+    background: var(--bg-card-hover);
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md), 0 0 30px rgba(124, 58, 237, 0.1);
+    border-color: var(--border-focus);
+}
+
+.lobby-card:hover::before {
+    opacity: 1;
+}
+
+.lobby-card-icon {
+    font-size: 2.5rem;
+    margin-bottom: 12px;
+}
+
+.lobby-card h2 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.lobby-card p {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.4;
+}
+
+/* Room List */
+.room-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.room-list-empty {
+    text-align: center;
+    color: var(--text-muted);
+    padding: 40px 0;
+}
+
+.room-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    transition: all var(--transition-fast);
+}
+
+.room-item:hover {
+    border-color: var(--border-focus);
+    background: var(--bg-card-hover);
+}
+
+.room-item-info h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 2px;
+}
+
+.room-item-info p {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.room-item .btn {
+    flex-shrink: 0;
+}
+
+/* Stats Grid */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
+
+.stat-card {
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    text-align: center;
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--primary-light);
+    margin-bottom: 4px;
+}
+
+.stat-label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Waiting Room */
+#waiting-screen {
+    background: var(--bg-dark);
+}
+
+.waiting-container {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    padding: 32px;
+    width: 90%;
+    max-width: 480px;
+    box-shadow: var(--shadow-lg);
+    animation: slideUp 400ms ease;
+}
+
+.waiting-header {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.waiting-header h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.room-code {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-top: 4px;
+}
+
+.room-code span {
+    color: var(--accent-light);
+    font-weight: 700;
+    font-size: 1.1rem;
+    letter-spacing: 2px;
+}
+
+.waiting-players {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+    max-height: 250px;
+    overflow-y: auto;
+}
+
+.waiting-player {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: var(--bg-input);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    animation: slideDown 200ms ease;
+}
+
+.waiting-player-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: white;
+}
+
+.waiting-player-name {
+    font-weight: 600;
+    flex: 1;
+}
+
+.waiting-player-host {
+    font-size: 0.75rem;
+    color: var(--accent);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.host-controls {
+    padding: 16px 0;
+    border-top: 1px solid var(--border);
+    margin-bottom: 12px;
+}
